@@ -1,9 +1,17 @@
 #!/bin/bash
 set -e
 
-echo "==> Running database migrations..."
 cd backend
-npx prisma db push --accept-data-loss
+
+echo "==> Node $(node --version)"
+echo "==> PORT: ${PORT:-3001}"
+
+if [ -n "$DATABASE_URL" ]; then
+  echo "==> Running database migrations..."
+  npx prisma db push --accept-data-loss || echo "Warning: prisma db push failed, continuing..."
+else
+  echo "Warning: DATABASE_URL not set, skipping migrations"
+fi
 
 echo "==> Starting StakeIQ API..."
-node src/app.js
+exec node src/app.js

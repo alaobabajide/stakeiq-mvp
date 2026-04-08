@@ -18,9 +18,12 @@ const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
+// Health check FIRST — before any middleware — so Railway probe always succeeds
+app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
+
 // Security
 app.use(helmet());
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173', credentials: true }));
+app.use(cors({ origin: process.env.FRONTEND_URL || '*', credentials: true }));
 
 // Rate limiting
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 200 });
@@ -37,9 +40,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Static uploads
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-
-// Health check
-app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 
 // API routes
 app.use('/api/auth', authRoutes);
@@ -58,6 +58,6 @@ app.use((req, res) => res.status(404).json({ error: 'Route not found' }));
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`StakeIQ API running on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`StakeIQ API running on port ${PORT}`));
 
 module.exports = app;
