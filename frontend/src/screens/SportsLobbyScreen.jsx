@@ -97,7 +97,7 @@ const SPORTS = [
 ];
 
 export default function SportsLobbyScreen() {
-  const { goTo, showToast } = useApp();
+  const { goTo, setActiveSport } = useApp();
   const [counts, setCounts] = useState({});
 
   useEffect(() => {
@@ -107,9 +107,8 @@ export default function SportsLobbyScreen() {
   }, []);
 
   const handleSportSelect = (sport) => {
-    // Navigate to home with sport filter — for now show toast
-    showToast(`Loading ${sport.name} markets...`);
-    goTo('home');
+    setActiveSport(sport);
+    goTo('sport-matches');
   };
 
   return (

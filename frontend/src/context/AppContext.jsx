@@ -11,6 +11,7 @@ export function AppProvider({ children }) {
   const [betslipItems, setBetslipItems] = useState([]); // { oddId, matchId, outcome, label, oddValue, matchLabel }
   const [wallet, setWallet] = useState(null);
   const [stats, setStats] = useState(null);
+  const [activeSport, setActiveSport] = useState(null); // { id, name, icon, color }
 
   const showToast = useCallback((msg) => {
     setToast({ msg, visible: true });
@@ -80,7 +81,8 @@ export function AppProvider({ children }) {
     <AppContext.Provider value={{
       screen, goTo, user, setUser, token, login, logout,
       toast, showToast, betslipItems, toggleOdd, clearBetslip,
-      wallet, refreshWallet, stats, refreshStats
+      wallet, refreshWallet, stats, refreshStats,
+      activeSport, setActiveSport
     }}>
       {children}
     </AppContext.Provider>
