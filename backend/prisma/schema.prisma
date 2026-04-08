@@ -141,6 +141,7 @@ enum TransactionStatus {
 // ─── MATCHES ─────────────────────────────────────────────────────────────────
 model Match {
   id            String        @id @default(uuid())
+  externalId    String?       @unique  // The Odds API event ID
   league        String
   leagueCode    String?
   homeTeam      String
