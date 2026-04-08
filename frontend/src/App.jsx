@@ -12,6 +12,7 @@ import WithdrawScreen from './screens/WithdrawScreen';
 import SpendScreen from './screens/SpendScreen';
 import DepositScreen from './screens/DepositScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import SportsLobbyScreen from './screens/SportsLobbyScreen';
 
 const SCREENS = {
   splash: SplashScreen,
@@ -30,6 +31,7 @@ const SCREENS = {
   spend: SpendScreen,
   deposit: DepositScreen,
   profile: ProfileScreen,
+  lobby: SportsLobbyScreen,
 };
 
 function AppShell() {

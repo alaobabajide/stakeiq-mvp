@@ -20,16 +20,19 @@ model User {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  kyc              Kyc?
-  wallet           Wallet?
-  bsr              Bsr?
-  betslips         Betslip[]
-  transactions     Transaction[]
-  withdrawals      Withdrawal[]
-  spendingLimit    SpendingLimit?
-  tipsterProfile   Tipster?
-  tipSubscriptions TipsterSubscription[]
-  selfExclusion    SelfExclusion?
+  kyc                     Kyc?
+  wallet                  Wallet?
+  bsr                     Bsr?
+  betslips                Betslip[]
+  transactions            Transaction[]
+  withdrawals             Withdrawal[]
+  spendingLimit           SpendingLimit?
+  tipsterProfile          Tipster?
+  tipSubscriptions        TipsterSubscription[]
+  selfExclusion           SelfExclusion?
+  referralsGiven          Referral[]             @relation("ReferrerReferrals")
+  referralReceived        Referral?              @relation("ReferredUserReferral")
+  notificationPreferences NotificationPreference?
 
   @@map("users")
 }
@@ -137,26 +140,41 @@ enum TransactionStatus {
 
 // ─── MATCHES ─────────────────────────────────────────────────────────────────
 model Match {
-  id          String      @id @default(uuid())
-  league      String
-  leagueCode  String?
-  homeTeam    String
-  awayTeam    String
-  homeScore   Int?
-  awayScore   Int?
-  status      MatchStatus @default(UPCOMING)
-  startTime   DateTime
-  endTime     DateTime?
-  minute      Int?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id            String        @id @default(uuid())
+  league        String
+  leagueCode    String?
+  homeTeam      String
+  awayTeam      String
+  homeScore     Int?
+  awayScore     Int?
+  status        MatchStatus   @default(UPCOMING)
+  startTime     DateTime
+  endTime       DateTime?
+  minute        Int?
+  sportCategory SportCategory @default(FOOTBALL)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
   odds        Odd[]
   betItems    BetslipItem[]
 
   @@index([status])
   @@index([startTime])
+  @@index([sportCategory])
   @@map("matches")
+}
+
+enum SportCategory {
+  FOOTBALL
+  BASKETBALL
+  TENNIS
+  BOXING
+  CRICKET
+  NFL
+  ESPORTS
+  VIRTUAL
+  POLITICS
+  ENTERTAINMENT
 }
 
 enum MatchStatus {
@@ -402,4 +420,45 @@ model SelfExclusion {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("self_exclusions")
+}
+
+// ─── REFERRALS ────────────────────────────────────────────────────────────────
+model Referral {
+  id             String         @id @default(uuid())
+  referrerId     String
+  referredUserId String?        @unique
+  referralCode   String         @unique
+  bonusAmount    Decimal        @default(500) @db.Decimal(12, 2)
+  status         ReferralStatus @default(PENDING)
+  claimedAt      DateTime?
+  createdAt      DateTime       @default(now())
+
+  referrer     User  @relation("ReferrerReferrals", fields: [referrerId], references: [id], onDelete: Cascade)
+  referredUser User? @relation("ReferredUserReferral", fields: [referredUserId], references: [id])
+
+  @@index([referrerId])
+  @@index([referralCode])
+  @@map("referrals")
+}
+
+enum ReferralStatus {
+  PENDING
+  COMPLETED
+  EXPIRED
+}
+
+// ─── NOTIFICATION PREFERENCES ─────────────────────────────────────────────────
+model NotificationPreference {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  matchResults  Boolean  @default(true)
+  payoutAlerts  Boolean  @default(true)
+  tipsterTips   Boolean  @default(false)
+  promotions    Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_preferences")
 }

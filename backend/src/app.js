@@ -14,6 +14,7 @@ const tipsterRoutes = require('./routes/tipsters');
 const withdrawRoutes = require('./routes/withdraw');
 const statsRoutes = require('./routes/stats');
 const webhookRoutes = require('./routes/webhooks');
+const referralRoutes = require('./routes/referrals');
 const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -50,6 +51,7 @@ app.use('/api/wallet', walletRoutes);
 app.use('/api/tipsters', tipsterRoutes);
 app.use('/api/withdraw', withdrawRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/referrals', referralRoutes);
 
 // ── Serve React frontend ──────────────────────────────────────────────────────
 const frontendDist = path.join(__dirname, '../../frontend/dist');

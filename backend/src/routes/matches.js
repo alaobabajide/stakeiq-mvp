@@ -2,19 +2,27 @@ const express = require('express');
 
 const { authenticate } = require('../middleware/auth');
 const { asyncHandler } = require('../middleware/errorHandler');
+const { getSportLobbyCounts } = require('../services/sportradar');
 
 const router = express.Router();
 const prisma = require('../lib/prisma');
 
-// GET /api/matches?status=LIVE&league=
+// GET /api/matches/lobby — sport category counts for the lobby screen
+router.get('/lobby', authenticate, asyncHandler(async (req, res) => {
+  const counts = await getSportLobbyCounts();
+  res.json({ lobby: counts });
+}));
+
+// GET /api/matches?status=LIVE&league=&sport=FOOTBALL
 router.get('/', authenticate, asyncHandler(async (req, res) => {
-  const { status, league, page = '1', limit = '20' } = req.query;
+  const { status, league, sport, page = '1', limit = '20' } = req.query;
   const skip = (parseInt(page) - 1) * parseInt(limit);
 
   const where = {};
   if (status) where.status = status;
   if (league) where.league = { contains: league, mode: 'insensitive' };
   else where.status = { in: ['LIVE', 'UPCOMING'] };
+  if (sport) where.sportCategory = sport.toUpperCase();
 
   const [matches, total] = await Promise.all([
     prisma.match.findMany({
