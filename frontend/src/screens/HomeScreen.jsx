@@ -112,8 +112,23 @@ export default function HomeScreen() {
         )}
       </div>
 
+      {/* Sports Lobby Banner */}
+      <div style={{ padding: '12px 20px 0', flexShrink: 0 }}>
+        <div onClick={() => goTo('lobby')}
+          style={{ background: 'linear-gradient(90deg,#F0A500,#FFD700)', borderRadius: 14, padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', boxShadow: '0 4px 12px rgba(240,165,0,0.3)', marginBottom: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ fontSize: 22 }}>🏟️</div>
+            <div>
+              <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 800, color: '#0D1B3E' }}>Sports Lobby</div>
+              <div style={{ fontSize: 11, color: 'rgba(13,27,62,0.6)' }}>10 sports · Real-time odds via Sportradar</div>
+            </div>
+          </div>
+          <div style={{ fontSize: 20, color: '#0D1B3E', fontWeight: 800 }}>›</div>
+        </div>
+      </div>
+
       {/* Wallet */}
-      <div style={{ display: 'flex', gap: 10, padding: '0 20px', marginTop: -14, flexShrink: 0 }}>
+      <div style={{ display: 'flex', gap: 10, padding: '0 20px', marginTop: 0, flexShrink: 0 }}>
         <div style={{ flex: 1, background: '#fff', borderRadius: 14, padding: 14, boxShadow: '0 4px 20px rgba(13,27,62,0.12)' }}>
           <div style={{ fontSize: 11, color: '#8A95B0', fontFamily: "'Outfit',sans-serif", fontWeight: 600, textTransform: 'uppercase', letterSpacing: .5 }}>Balance</div>
           <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 20, fontWeight: 800, color: '#1a1f36', marginTop: 3 }}>

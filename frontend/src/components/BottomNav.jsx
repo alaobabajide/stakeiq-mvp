@@ -2,8 +2,8 @@ import { useApp } from '../context/AppContext';
 
 const navItems = [
   { id: 'home', icon: '🏠', label: 'Home' },
+  { id: 'lobby', icon: '🏟️', label: 'Sports' },
   { id: 'tipsters', icon: '⭐', label: 'Tipsters' },
-  { id: 'spend', icon: '📊', label: 'My Stats' },
   { id: 'withdraw', icon: '💸', label: 'Withdraw' },
   { id: 'profile', icon: '👤', label: 'Profile' },
 ];
