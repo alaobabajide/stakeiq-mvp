@@ -9,6 +9,8 @@ cd backend
 if [ -n "$DATABASE_URL" ]; then
   echo "==> Running database migrations..."
   npx prisma db push --accept-data-loss || echo "Warning: prisma db push failed, continuing..."
+  echo "==> Seeding demo matches for all sports..."
+  node src/scripts/seedMatches.js || echo "Warning: seed failed, continuing..."
 else
   echo "Warning: DATABASE_URL not set, skipping migrations"
 fi

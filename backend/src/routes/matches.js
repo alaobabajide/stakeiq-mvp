@@ -3,25 +3,48 @@ const express = require('express');
 const { authenticate } = require('../middleware/auth');
 const { asyncHandler } = require('../middleware/errorHandler');
 const { syncSportToDb, getSportLobbyCounts, needsSync } = require('../services/oddsapi');
+const { seedMatches } = require('../scripts/seedMatches');
 
 const router = express.Router();
 const prisma = require('../lib/prisma');
 
-// GET /api/matches/lobby — real DB counts + lazy sync of all sports
-router.get('/lobby', authenticate, asyncHandler(async (req, res) => {
-  // Fire-and-forget background sync for FOOTBALL (most common) if stale
-  if (needsSync('FOOTBALL') && process.env.ODDS_API_KEY) {
-    syncSportToDb('FOOTBALL', prisma).catch(() => {});
+// Ensure a sport has data — seed demo if empty, sync from API if key available
+async function ensureSportData(sportCategory) {
+  if (!sportCategory) return;
+
+  const count = await prisma.match.count({
+    where: { sportCategory, status: { in: ['LIVE', 'UPCOMING'] } },
+  });
+
+  if (count === 0) {
+    // No data at all — seed demo matches immediately
+    await seedMatches(sportCategory);
   }
+
+  // If API key available and sync is stale, refresh in background
+  if (process.env.ODDS_API_KEY && needsSync(sportCategory)) {
+    syncSportToDb(sportCategory, prisma).catch(() => {});
+  }
+}
+
+// GET /api/matches/lobby — real DB counts per sport
+router.get('/lobby', authenticate, asyncHandler(async (req, res) => {
+  // Ensure all sports have at least demo data
+  const allSports = ['FOOTBALL','BASKETBALL','TENNIS','BOXING','CRICKET','NFL','ESPORTS','VIRTUAL','POLITICS','ENTERTAINMENT'];
+  await Promise.all(allSports.map(s => ensureSportData(s)));
+
   const counts = await getSportLobbyCounts(prisma);
   res.json({ lobby: counts });
 }));
 
-// POST /api/matches/sync — manually trigger sync for a sport category
+// POST /api/matches/sync — manually trigger live sync for a sport
 router.post('/sync', authenticate, asyncHandler(async (req, res) => {
   const { sport } = req.body;
   if (!process.env.ODDS_API_KEY) {
-    return res.status(400).json({ error: 'ODDS_API_KEY not configured', hint: 'Add your key from https://the-odds-api.com' });
+    return res.status(400).json({
+      error: 'ODDS_API_KEY not configured',
+      hint: 'Get your free key at https://the-odds-api.com and set it as an env variable',
+    });
   }
   const category = (sport || 'FOOTBALL').toUpperCase();
   const result = await syncSportToDb(category, prisma);
@@ -34,9 +57,9 @@ router.get('/', authenticate, asyncHandler(async (req, res) => {
   const skip = (parseInt(page) - 1) * parseInt(limit);
   const sportCategory = sport ? sport.toUpperCase() : null;
 
-  // Lazy sync: if we have an API key and data for this sport is stale, sync in background
-  if (sportCategory && needsSync(sportCategory) && process.env.ODDS_API_KEY) {
-    syncSportToDb(sportCategory, prisma).catch(() => {});
+  // Ensure this sport has data before querying
+  if (sportCategory) {
+    await ensureSportData(sportCategory);
   }
 
   const where = {};
