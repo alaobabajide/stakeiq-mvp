@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-cd backend
-
 echo "==> Node $(node --version)"
 echo "==> PORT: ${PORT:-3001}"
+
+cd backend
 
 if [ -n "$DATABASE_URL" ]; then
   echo "==> Running database migrations..."
@@ -13,5 +13,5 @@ else
   echo "Warning: DATABASE_URL not set, skipping migrations"
 fi
 
-echo "==> Starting StakeIQ API..."
+echo "==> Starting StakeIQ API + Frontend..."
 exec node src/app.js

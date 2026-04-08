@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "StakeIQ — Nigerian sports betting platform",
   "scripts": {
-    "build": "cd backend && npm install && npx prisma generate",
+    "build": "cd frontend && npm install && npm run build && cd ../backend && npm install && npx prisma generate",
     "start": "bash start.sh"
   },
   "engines": {

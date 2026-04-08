@@ -51,8 +51,17 @@ app.use('/api/tipsters', tipsterRoutes);
 app.use('/api/withdraw', withdrawRoutes);
 app.use('/api/stats', statsRoutes);
 
-// 404
-app.use((req, res) => res.status(404).json({ error: 'Route not found' }));
+// Serve React frontend (built by Vite into frontend/dist)
+const frontendDist = path.join(__dirname, '../../frontend/dist');
+app.use(express.static(frontendDist));
+
+// All non-API routes return the React app (client-side routing)
+app.get('*', (req, res) => {
+  const indexFile = path.join(frontendDist, 'index.html');
+  res.sendFile(indexFile, (err) => {
+    if (err) res.status(404).json({ error: 'Route not found' });
+  });
+});
 
 // Error handler
 app.use(errorHandler);
