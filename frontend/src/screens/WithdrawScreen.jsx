@@ -83,8 +83,8 @@ export default function WithdrawScreen() {
           <div key={m.id}
             onClick={() => setMethod(m.id)}
             style={{
-              background: '#fff', border: `2px solid ${method === m.id ? '#F0A500' : '#E2E6F0'}`,
               background: method === m.id ? '#fff3d6' : '#fff',
+              border: `2px solid ${method === m.id ? '#F0A500' : '#E2E6F0'}`,
               borderRadius: 12, padding: 14, marginBottom: 10,
               display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer'
             }}>
