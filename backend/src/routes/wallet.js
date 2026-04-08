@@ -1,6 +1,6 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const { PrismaClient } = require('@prisma/client');
+
 const { v4: uuidv4 } = require('uuid');
 const { authenticate, requireKyc } = require('../middleware/auth');
 const { asyncHandler } = require('../middleware/errorHandler');
@@ -8,7 +8,7 @@ const opay = require('../services/opay');
 const palmpay = require('../services/palmpay');
 
 const router = express.Router();
-const prisma = new PrismaClient();
+const prisma = require('../lib/prisma');
 
 // GET /api/wallet
 router.get('/', authenticate, asyncHandler(async (req, res) => {

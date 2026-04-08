@@ -8,13 +8,13 @@
  * For local dev, use ngrok: npx ngrok http 3001
  */
 const express = require('express');
-const { PrismaClient } = require('@prisma/client');
+
 const opay = require('../services/opay');
 const palmpay = require('../services/palmpay');
 const { asyncHandler } = require('../middleware/errorHandler');
 
 const router = express.Router();
-const prisma = new PrismaClient();
+const prisma = require('../lib/prisma');
 
 // ─── Shared: Credit wallet after confirmed deposit ────────────────────────────
 async function creditWallet(tx, userId, amount, reference, provider) {

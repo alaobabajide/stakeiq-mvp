@@ -18,30 +18,30 @@ const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
-// Health check FIRST — before any middleware — so Railway probe always succeeds
+// ── Health check: FIRST, before everything ───────────────────────────────────
 app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 
-// Security
-app.use(helmet());
-app.use(cors({ origin: process.env.FRONTEND_URL || '*', credentials: true }));
+// ── Security ─────────────────────────────────────────────────────────────────
+app.use(helmet({ contentSecurityPolicy: false })); // CSP off so React loads
+app.use(cors({ origin: '*', credentials: true }));
 
-// Rate limiting
-const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 200 });
-const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20, message: 'Too many attempts, try again in 15 minutes' });
+// ── Rate limiting ─────────────────────────────────────────────────────────────
+const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 300 });
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
 app.use('/api/auth', authLimiter);
 app.use(limiter);
 
-// Webhooks must use raw body BEFORE express.json() parses it
+// ── Webhooks (raw body, before json parser) ───────────────────────────────────
 app.use('/api/webhooks', webhookRoutes);
 
-// Body parsing (after webhooks)
+// ── Body parsing ──────────────────────────────────────────────────────────────
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Static uploads
+// ── Static file uploads ───────────────────────────────────────────────────────
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// API routes
+// ── API routes ────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
 app.use('/api/kyc', kycRoutes);
 app.use('/api/matches', matchRoutes);
@@ -51,22 +51,24 @@ app.use('/api/tipsters', tipsterRoutes);
 app.use('/api/withdraw', withdrawRoutes);
 app.use('/api/stats', statsRoutes);
 
-// Serve React frontend (built by Vite into frontend/dist)
+// ── Serve React frontend ──────────────────────────────────────────────────────
 const frontendDist = path.join(__dirname, '../../frontend/dist');
 app.use(express.static(frontendDist));
-
-// All non-API routes return the React app (client-side routing)
 app.get('*', (req, res) => {
-  const indexFile = path.join(frontendDist, 'index.html');
-  res.sendFile(indexFile, (err) => {
-    if (err) res.status(404).json({ error: 'Route not found' });
+  res.sendFile(path.join(frontendDist, 'index.html'), (err) => {
+    if (err) res.status(200).sendFile(path.join(frontendDist, 'index.html'));
   });
 });
 
-// Error handler
+// ── Error handler ─────────────────────────────────────────────────────────────
 app.use(errorHandler);
 
+// ── Start server ──────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, '0.0.0.0', () => console.log(`StakeIQ API running on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`✅ StakeIQ running on port ${PORT}`);
+  console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`   DATABASE: ${process.env.DATABASE_URL ? '✅ configured' : '❌ DATABASE_URL not set!'}`);
+});
 
 module.exports = app;
