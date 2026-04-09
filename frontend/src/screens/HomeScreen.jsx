@@ -112,18 +112,29 @@ export default function HomeScreen() {
         )}
       </div>
 
-      {/* Sports Lobby Banner */}
-      <div style={{ padding: '12px 20px 0', flexShrink: 0 }}>
+      {/* Sports Lobby + Tipsters Banners */}
+      <div style={{ padding: '12px 20px 0', flexShrink: 0, display: 'flex', gap: 10 }}>
         <div onClick={() => goTo('lobby')}
-          style={{ background: 'linear-gradient(90deg,#F0A500,#FFD700)', borderRadius: 14, padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', boxShadow: '0 4px 12px rgba(240,165,0,0.3)', marginBottom: 10 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ fontSize: 22 }}>🏟️</div>
+          style={{ flex: 1, background: 'linear-gradient(90deg,#F0A500,#FFD700)', borderRadius: 14, padding: '12px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', boxShadow: '0 4px 12px rgba(240,165,0,0.3)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ fontSize: 20 }}>🏟️</div>
             <div>
-              <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 800, color: '#0D1B3E' }}>Sports Lobby</div>
-              <div style={{ fontSize: 11, color: 'rgba(13,27,62,0.6)' }}>10 sports · Real-time odds via Sportradar</div>
+              <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 800, color: '#0D1B3E' }}>Sports Lobby</div>
+              <div style={{ fontSize: 10, color: 'rgba(13,27,62,0.6)' }}>10 sports</div>
             </div>
           </div>
-          <div style={{ fontSize: 20, color: '#0D1B3E', fontWeight: 800 }}>›</div>
+          <div style={{ fontSize: 18, color: '#0D1B3E', fontWeight: 800 }}>›</div>
+        </div>
+        <div onClick={() => goTo('tipsters')}
+          style={{ flex: 1, background: 'linear-gradient(90deg,#2D1B69,#4A2C99)', borderRadius: 14, padding: '12px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', boxShadow: '0 4px 12px rgba(45,27,105,0.35)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ fontSize: 20 }}>⭐</div>
+            <div>
+              <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 800, color: '#fff' }}>Tipsters</div>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)' }}>Top picks</div>
+            </div>
+          </div>
+          <div style={{ fontSize: 18, color: '#F0A500', fontWeight: 800 }}>›</div>
         </div>
       </div>
 
