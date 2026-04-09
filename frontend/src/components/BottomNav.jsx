@@ -3,8 +3,8 @@ import { useApp } from '../context/AppContext';
 const navItems = [
   { id: 'home', icon: '🏠', label: 'Home' },
   { id: 'lobby', icon: '🏟️', label: 'Sports' },
-  { id: 'tipsters', icon: '⭐', label: 'Tipsters' },
-  { id: 'withdraw', icon: '💸', label: 'Withdraw' },
+  { id: 'betslip', icon: '📋', label: 'Betslip' },
+  { id: 'wallet', icon: '💳', label: 'Wallet' },
   { id: 'profile', icon: '👤', label: 'Profile' },
 ];
 

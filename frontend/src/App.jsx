@@ -14,6 +14,7 @@ import DepositScreen from './screens/DepositScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import SportsLobbyScreen from './screens/SportsLobbyScreen';
 import SportMatchesScreen from './screens/SportMatchesScreen';
+import WalletScreen from './screens/WalletScreen';
 
 const SCREENS = {
   splash: SplashScreen,
@@ -34,6 +35,7 @@ const SCREENS = {
   profile: ProfileScreen,
   lobby: SportsLobbyScreen,
   'sport-matches': SportMatchesScreen,
+  wallet: WalletScreen,
 };
 
 function AppShell() {

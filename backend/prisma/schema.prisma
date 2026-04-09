@@ -33,6 +33,7 @@ model User {
   referralsGiven          Referral[]             @relation("ReferrerReferrals")
   referralReceived        Referral?              @relation("ReferredUserReferral")
   notificationPreferences NotificationPreference?
+  billPayments            BillPayment[]
 
   @@map("users")
 }
@@ -421,6 +422,45 @@ model SelfExclusion {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("self_exclusions")
+}
+
+// ─── BILL PAYMENTS ────────────────────────────────────────────────────────────
+model BillPayment {
+  id            String       @id @default(uuid())
+  userId        String
+  category      BillCategory
+  provider      String
+  accountNumber String
+  amount        Decimal      @db.Decimal(12, 2)
+  cashback      Decimal      @default(0) @db.Decimal(12, 2)
+  bsrPoints     Int          @default(0)
+  status        BillStatus   @default(PENDING)
+  reference     String       @unique @default(uuid())
+  token         String?
+  metadata      Json?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([category])
+  @@map("bill_payments")
+}
+
+enum BillCategory {
+  AIRTIME
+  DATA
+  ELECTRICITY
+  CABLE_TV
+  EDUCATION
+  INTERNET
+}
+
+enum BillStatus {
+  PENDING
+  COMPLETED
+  FAILED
 }
 
 // ─── REFERRALS ────────────────────────────────────────────────────────────────
